@@ -21,6 +21,8 @@ pub fn execute_command(command: &GitCommand) {
         GitCommandType::ListBranches => commands::list_branches(),
         GitCommandType::Commit => commands::commit(&command.args).expect("Failed to commit"),
         GitCommandType::Add => commands::add_files().expect("Failed to add files"),
+        GitCommandType::Push => commands::push(&command.args).expect("Failed to push"),
+        GitCommandType::Pull => commands::pull(&command.args).expect("Failed to pull"),
         _ => commands::exit_application()
     }
 }
