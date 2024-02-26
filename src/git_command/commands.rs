@@ -1,4 +1,7 @@
-use std::{process::{Stdio, Command, self}, io::{BufRead, Write, self}};
+use std::{
+    io::{self, BufRead, Write},
+    process::{self, Command, Stdio},
+};
 
 pub fn list_branches() {
     println!("Here is a list of branches available");
@@ -47,10 +50,11 @@ pub fn add_files() -> std::io::Result<()> {
 }
 
 pub fn exit_application() {
-        std::io::stderr().write(b"Error: Failed to execute command").unwrap();
-        process::exit(1);
+    std::io::stderr()
+        .write(b"Error: Failed to execute command")
+        .unwrap();
+    process::exit(1);
 }
-
 
 pub fn commit(args: &Vec<String>) -> std::io::Result<()> {
     let mut binding = Command::new("git");
@@ -62,16 +66,15 @@ pub fn commit(args: &Vec<String>) -> std::io::Result<()> {
         std::io::stdout().flush().unwrap();
         std::io::stdin().read_line(&mut message).unwrap();
     }
-    let mut command = binding
-        .arg("commit")
-        .arg("-m");
+    let mut command = binding.arg("commit").arg("-m");
     if message.len() > 0 {
         command = command.arg(message);
     }
     let mut command = command.spawn()?;
-    let stdout = command.stdout.take().unwrap();
-    for line in std::io::BufReader::new(stdout).lines() {
-      println!("{}", line?);
+    if let Some(stdout) = command.stdout.take() {
+        for line in std::io::BufReader::new(stdout).lines() {
+            println!("{}", line?);
+        }
     }
     Ok(())
 }
